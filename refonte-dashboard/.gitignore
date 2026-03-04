@@ -1,0 +1,20 @@
+# Secrets locaux — NE JAMAIS committer
+sync/.env
+.env
+.env.*
+*.env
+
+# Logs
+logs/*.log
+logs/batch_*.txt
+!logs/.gitkeep
+
+# Fichiers temporaires
+sync/sync_
+sync/debug_rows.json
+
+# PHP temporaires
+temporary_sign.php
+test.php
+test_enrolled.php
+check_batch_progress.php

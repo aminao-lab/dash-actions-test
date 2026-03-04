@@ -1,0 +1,4 @@
+# Bloquer tout accès web au dossier sync/
+# Ces scripts sont uniquement exécutés en CLI (GitHub Actions)
+Order allow,deny
+Deny from all

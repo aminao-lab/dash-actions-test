@@ -1,0 +1,87 @@
+name: ⚡ Sync Daily Activity + Progression
+
+on:
+  schedule:
+    - cron: "20 1 * * *"   # tous les jours à 01h20
+  workflow_dispatch:
+
+concurrency:
+  group: sync-daily-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  activity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+
+    strategy:
+      fail-fast: false
+      matrix:
+        job_index: [0, 1, 2, 3]   # 4 jobs parallèles
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: curl, json
+
+      - name: ⚡ Daily Activity (Job ${{ matrix.job_index }}/4)
+        working-directory: ./refonte-dashboard/sync
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          LW_BASE_URL: ${{ secrets.LW_BASE_URL }}
+          LW_API_TOKEN: ${{ secrets.LW_API_TOKEN }}
+          LW_CLIENT_ID: ${{ secrets.LW_CLIENT_ID }}
+          JOB_INDEX: ${{ matrix.job_index }}
+          TOTAL_JOBS: 4
+        run: php sync_daily_activity.php
+
+      - name: 📊 Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: activity-logs-job-${{ matrix.job_index }}
+          path: refonte-dashboard/logs/
+          if-no-files-found: ignore
+          retention-days: 3
+
+  progression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+
+    strategy:
+      fail-fast: false
+      matrix:
+        job_index: [0, 1, 2, 3]   # 4 jobs parallèles
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: curl, json
+
+      - name: 🏅 Progression (Job ${{ matrix.job_index }}/4)
+        working-directory: ./refonte-dashboard/sync
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          LW_BASE_URL: ${{ secrets.LW_BASE_URL }}
+          LW_API_TOKEN: ${{ secrets.LW_API_TOKEN }}
+          LW_CLIENT_ID: ${{ secrets.LW_CLIENT_ID }}
+          JOB_INDEX: ${{ matrix.job_index }}
+          TOTAL_JOBS: 4
+        run: php sync_progression.php
+
+      - name: 📊 Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: progression-logs-job-${{ matrix.job_index }}
+          path: refonte-dashboard/logs/
+          if-no-files-found: ignore
+          retention-days: 3

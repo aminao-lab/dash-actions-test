@@ -1,0 +1,40 @@
+# ============================================================
+# .htaccess — Sécurité du dashboard
+# ============================================================
+
+# Désactiver la liste des répertoires
+Options -Indexes
+ServerSignature Off
+
+# Bloquer l'accès aux fichiers sensibles
+<FilesMatch "\.(env|log|txt|md|json|lock|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Bloquer les dossiers privés (config, includes, sync, logs, database)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^config/    - [F,L]
+    RewriteRule ^includes/  - [F,L]
+    RewriteRule ^sync/      - [F,L]
+    RewriteRule ^logs/      - [F,L]
+    RewriteRule ^database/  - [F,L]
+</IfModule>
+
+# Headers de sécurité
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+</IfModule>
+
+# Forcer HTTPS en production (décommenter)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>

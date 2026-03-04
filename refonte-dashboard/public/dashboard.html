@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Suivi Apprentissage</title>
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+  <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+</head>
+
+<body>
+
+  <!-- Chargement -->
+  <div id="loader" class="loader">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Chargement de vos données…</p>
+    </div>
+  </div>
+
+  <div class="container" id="dashboard" style="display:none;">
+
+    <div class="container">
+
+      <!-- HEADER -->
+      <section class="header">
+        <h1>Bonjour, <span id="username">—</span></h1>
+        <small>Données mises à jour le <span id="last-updated">—</span></small>
+        <div class="controls">
+          <select id="niveau"></select>
+          <button id="logout-btn" class="logout-btn" title="Se déconnecter">⏻</button>
+        </div>
+      </section>
+
+      <div id="select-level-message" class="select-level-message">
+        Veuillez sélectionner un niveau pour voir votre progression
+      </div>
+
+      <!-- CONTENU PRINCIPAL -->
+      <div id="dashboard-content" style="display:none;">
+
+        <!-- Stats globales -->
+        <section class="grid" style="margin-top:18px">
+          <div class="card">
+            <div class="stat">
+              <h3>Temps passé global :</h3>
+              <div class="value"><span id="total-hours">0</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="stat">
+              <h3>Score d'avancement global :</h3>
+              <div class="value"><span id="score">0</span>%</div>
+              <div class="muted" id="score-comment">—</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Régularité -->
+        <section id="regularity" class="card regularity-card full-width" style="margin-top:16px">
+          <div id="regularity-tooltip" class="regularity-tooltip" style="display:none;"></div>
+          <h2>Vos badges de régularité :</h2>
+
+          <div class="regularity-summary">
+            <div class="muted" id="regularity-period">—</div>
+            <div class="regularity-kpis">
+              <span id="regularity-days" class="regularity-kpi">—</span>
+            </div>
+          </div>
+
+          <div class="regularity-track">
+            <div id="regularity-stations" class="regularity-stations v2">
+              <div class="station" data-tier="bronze">
+                <div class="station-icon">🏆</div>
+                <div class="station-marker"></div>
+                <span class="station-label">Bronze</span>
+                <div class="regularity-tooltip" aria-hidden="true"></div>
+              </div>
+              <div class="station" data-tier="silver">
+                <div class="station-icon">🏆</div>
+                <div class="station-marker"></div>
+                <span class="station-label">Argent</span>
+                <div class="regularity-tooltip" aria-hidden="true"></div>
+              </div>
+              <div class="station" data-tier="gold">
+                <div class="station-icon">🏆</div>
+                <div class="station-marker"></div>
+                <span class="station-label">Or</span>
+                <div class="regularity-tooltip" aria-hidden="true"></div>
+              </div>
+              <div class="station" data-tier="platinum">
+                <div class="station-icon">🏆</div>
+                <div class="station-marker"></div>
+                <span class="station-label">Platine</span>
+                <div class="regularity-tooltip" aria-hidden="true"></div>
+              </div>
+              <div class="station" data-tier="diamond">
+                <div class="station-icon">🏆</div>
+                <div class="station-marker"></div>
+                <span class="station-label">Diamant</span>
+                <div class="regularity-tooltip" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <div class="regularity-bar v2">
+              <div id="regularity-fill" class="regularity-bar-fill v2" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div id="regularity-message" class="muted" style="margin-top:12px;"></div>
+        </section>
+
+        <!-- Progression hebdomadaire -->
+        <section class="card full-width" style="margin-top:16px">
+          <h2>Votre progression générale :</h2>
+          <div class="row">
+
+            <!-- Carte semaine -->
+            <div class="week-card">
+              <button class="nav-arrow" id="week-prev" aria-label="Semaine précédente">‹</button>
+              <div class="week-main">
+                <div class="week-label">Temps passé cette semaine :</div>
+                <div class="week-value" id="week-hours-display">0 HEURE</div>
+                <div class="week-range" id="week-range">Semaine —</div>
+              </div>
+              <button class="nav-arrow" id="week-next" aria-label="Semaine suivante">›</button>
+            </div>
+
+            <!-- Histogramme -->
+            <div class="time-month">
+              <div class="muted" style="margin-bottom:6px">Temps passé les 30 derniers jours :</div>
+              <span class="bar-nav" id="bar-prev">‹</span>
+              <div id="bars" class="bars"></div>
+              <span class="bar-nav" id="bar-next">›</span>
+              <div class="legend">
+                <span id="chart-start">—</span>
+                <span id="chart-end">—</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Récapitulatif par niveau -->
+        <section class="card full-width" style="margin-top:16px">
+          <h2>Récapitulatif par niveau :</h2>
+          <div class="rows" style="gap:24px;flex-wrap:wrap;">
+            <div style="min-width:260px;flex:1;">
+              <div class="muted" style="margin-bottom:6px;">Progression</div>
+              <ul id="progression-list" style="margin:0;padding-left:18px;"></ul>
+            </div>
+            <div style="min-width:260px;flex:1;">
+              <div class="muted" style="margin-bottom:6px;">Temps total</div>
+              <ul id="temps-list" style="margin:0;padding-left:18px;"></ul>
+            </div>
+          </div>
+        </section>
+
+        <br><br>
+        <div class="footer-note">
+          Astuce : survole les barres pour voir plus d'informations.
+        </div>
+
+      </div><!-- /dashboard-content -->
+
+    </div><!-- /container inner -->
+
+  </div><!-- /dashboard -->
+
+  <script src="assets/js/main.js"></script>
+
+</body>
+</html>
