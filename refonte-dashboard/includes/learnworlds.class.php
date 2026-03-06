@@ -129,7 +129,7 @@ class LearnWorlds
     // ---------------------------------------------------------------
     public function getUsers(int $page = 1, int $perPage = 100): array|false
     {
-        return $this->makeRequest("/v2/users?page={$page}&itemsPerPage={$perPage}");
+        return $this->makeRequest("/v1/users?page={$page}&itemsPerPage={$perPage}");
     }
 
     // ---------------------------------------------------------------
@@ -137,7 +137,7 @@ class LearnWorlds
     // ---------------------------------------------------------------
     public function getCourses(int $page = 1, int $perPage = 100): array|false
     {
-        return $this->makeRequest("/v2/courses?page={$page}&itemsPerPage={$perPage}");
+        return $this->makeRequest("/v1/courses?page={$page}&itemsPerPage={$perPage}");
     }
 
     // ---------------------------------------------------------------
@@ -204,7 +204,7 @@ class LearnWorlds
     // ---------------------------------------------------------------
     public function getUserCourseProgress(string $userId, string $courseId): array|false
     {
-        return $this->makeRequest("/v2/users/{$userId}/courses/{$courseId}/progress");
+        return $this->makeRequest("/v1/users/{$userId}/courses/{$courseId}/progress");
     }
 
     // ---------------------------------------------------------------
@@ -212,7 +212,7 @@ class LearnWorlds
     // ---------------------------------------------------------------
     public function getUserCourses(string $userId): array|false
     {
-        return $this->makeRequest("/v2/users/{$userId}/courses");
+        return $this->makeRequest("/v1/users/{$userId}/courses");
     }
 
     // ---------------------------------------------------------------
