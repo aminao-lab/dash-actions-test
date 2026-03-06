@@ -114,6 +114,8 @@ class LearnWorlds
             return false;
         }
 
+        logMessage("LW [{httpCode}] {$endpoint}: " .substr($response, 0, 300));
+
         return json_decode($response, true) ?? [];
     }
 
