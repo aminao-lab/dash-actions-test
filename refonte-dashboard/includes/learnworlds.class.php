@@ -114,7 +114,7 @@ class LearnWorlds
         }
 
         if ($httpCode >= 400) {
-            error_log("❌ LW HTTP {$httpCode} on $endpoint: $response");
+            logMessage("❌ LW HTTP {$httpCode} on {$endpoint}: " . substr($body, 0, 500));
             return false;
         }
 
