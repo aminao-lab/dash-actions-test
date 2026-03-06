@@ -50,6 +50,8 @@ for ($i = 0; $i < $totalStudents; $i++) {
 
         $timeData = $lw->getUserTimeByLevel($userId);
 
+        logMessage(" timeData pour {$userId}:" .json_encode($timeData));
+
         $batchBuffer[] = [
             'user_id'  => $userId,
             '6eme'     => $timeData['6eme']    ?? 0,

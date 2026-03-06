@@ -6,13 +6,19 @@
 
 // Chargement .env local (CLI uniquement, jamais en production web)
 $envFile = __DIR__ . '/../sync/.env';
-if (PHP_SAPI === 'cli' && file_exists($envFile)) {
+$isLocal = in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1']);
+
+if ($isLocal || PHP_SAPI === 'cli' && file_exists($envFile)) {
     foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         $line = trim($line);
         if ($line === '' || $line[0] === '#') continue;
         if (strpos($line, '=') !== false) {
             [$name, $value] = explode('=', $line, 2);
-            putenv(trim($name) . '=' . trim($value));
+            $name  = trim($name);
+            $value = trim($value, " \t\n\r\0\x0B\"'");
+            if (getenv($name) === false) {
+                putenv("$name=$value");
+            }
         }
     }
 }
