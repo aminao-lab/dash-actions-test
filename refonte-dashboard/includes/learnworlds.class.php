@@ -44,6 +44,7 @@ class LearnWorlds
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_HEADER, true);
     }
 
     // ---------------------------------------------------------------
@@ -92,9 +93,11 @@ class LearnWorlds
             curl_setopt($ch, CURLOPT_POSTFIELDS,    json_encode($data ?? []));
         }
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlErr  = curl_error($ch);
+        $response   = curl_exec($ch);
+        $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $curlErr    = curl_error($ch);
+        $body       = substr($response, $headerSize);
         curl_close($ch);
 
         if ($response === false) {
@@ -114,9 +117,9 @@ class LearnWorlds
             return false;
         }
 
-        logMessage("LW [{httpCode}] {$endpoint}: " .substr($response, 0, 300));
+        logMessage("🔍 LW [{$httpCode}] {$endpoint}: " . substr($body, 0, 500));
 
-        return json_decode($response, true) ?? [];
+        return json_decode($body, true) ?? [];
     }
 
     // ---------------------------------------------------------------
