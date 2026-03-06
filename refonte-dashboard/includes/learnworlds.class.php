@@ -217,6 +217,8 @@ class LearnWorlds
         $result   = array_fill_keys(NIVEAUX, 0);
         $response = $this->getUserCourses($userId);
 
+        logMessage("RAW courses pour {$userId}:" .json_encode($response));
+
         if (!$response || empty($response['data'])) return $result;
 
         foreach ($response['data'] as $course) {
